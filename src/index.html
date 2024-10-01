@@ -11,9 +11,17 @@
     <load src="./partials/header.html" icon-path="img/sprite.svg#logo" />
 
     <main>
-      <!-- Loads the specified .html file -->
-      <load src="./partials/vite-promo.html" />
-      <load src="./partials/badges.html" />
+      <div class="container"></div>
+      
+      <load src="./partials/back-link.html" />
+      <form for="main-input" class="main-form">
+        <input type="text" id="main-input" name="main_input" class="main-input" placeholder="Search images...">
+        <button type="submit" class="main-button">Search</button>
+      </form>
+      <ul class="js-list"></ul>
+      <button type="button" class="load-more js-load-more is-hidden">Load more</button>
+      <span class="loader is-hidden"></span>
+      </div>
     </main>
 
     <load src="./partials/footer.html" />
