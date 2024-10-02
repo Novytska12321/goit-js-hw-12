@@ -39,6 +39,7 @@ const onSearchFormSubmit = async event => {
         const data = await fetchPhotos(searchValue, currentPage);
 
         if (data.hits.length === 0) {
+            loadMoreBtnEl.classList.add("is-hidden");
             return iziToast.show({
                 message: "Sorry, there are no images matching your search query. Please try again!",
                 position: "topRight",
@@ -49,44 +50,51 @@ const onSearchFormSubmit = async event => {
         const galleryMarkup = data.hits.map(createGalleryCard).join('');
         galleryEl.innerHTML = galleryMarkup;
         const galleryCardEl = galleryEl.querySelector("li");
-        
+
         cardHeight = galleryCardEl.getBoundingClientRect().height;
         lightbox.refresh();
-        loadMoreBtnEl.classList.remove("is-hidden")
+
+        
+        if (data.hits.length < 15) {
+            loadMoreBtnEl.classList.add("is-hidden");
+        } else {
+            loadMoreBtnEl.classList.remove("is-hidden");
+        }
 
     } catch (error) {
         console.log(error);
 
     } finally {
-        loaderEl.classList.add('is-hidden'); 
-        searchFormEl.reset(); 
+        loaderEl.classList.add('is-hidden');
+        searchFormEl.reset();
     }
 };
+
 const onLoadMoreBtnClick = async event => {
-   try {
-       currentPage++;
-       const data = await fetchPhotos(searchValue, currentPage);
-       const galleryMarkup = data.hits.map(createGalleryCard).join('');
-       galleryEl.insertAdjacentHTML('beforeend', galleryMarkup);
-       scrollBy({
-           top: cardHeight * 2,
-           behavior: 'smooth',
-       })
-       if (currentPage === response.data.totalHits) {
-           loadMoreBtnEl.classList.add("is-hidden");
-           return iziToast.show({
+    try {
+        currentPage++;
+        const data = await fetchPhotos(searchValue, currentPage);
+        const galleryMarkup = data.hits.map(createGalleryCard).join('');
+        galleryEl.insertAdjacentHTML('beforeend', galleryMarkup);
+        scrollBy({
+            top: cardHeight * 2,
+            behavior: 'smooth',
+        });
+
+        
+        if (data.hits.length < 15 || currentPage * 15 >= data.totalHits) {
+            loadMoreBtnEl.classList.add("is-hidden");
+            iziToast.show({
                 message: "We're sorry, but you've reached the end of search results.",
                 position: "topRight",
                 color: 'blue',
-               
-           })
-       }
-       
-   } catch (error) {
-    console.log(error);
-    
-   }
-    
-}
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 loadMoreBtnEl.addEventListener('click', onLoadMoreBtnClick);
