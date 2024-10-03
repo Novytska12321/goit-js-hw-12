@@ -76,6 +76,7 @@ const onLoadMoreBtnClick = async event => {
         const data = await fetchPhotos(searchValue, currentPage);
         const galleryMarkup = data.hits.map(createGalleryCard).join('');
         galleryEl.insertAdjacentHTML('beforeend', galleryMarkup);
+        lightbox.refresh();
         scrollBy({
             top: cardHeight * 2,
             behavior: 'smooth',
